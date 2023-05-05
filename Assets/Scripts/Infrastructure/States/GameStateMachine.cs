@@ -19,7 +19,7 @@ public class GameStateMachine
         _states = new Dictionary<Type, IExitableState>()
         {
             [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader),
-            [typeof(LoadLevelScene)] = new LoadLevelScene(this, sceneLoader, curtain),
+            [typeof(LoadLevelScene)] = new LoadLevelScene(this, sceneLoader, curtain, AllServices.Container.Single<IGameFactory>()),
             [typeof(GameLoopState)] = new GameLoopState(this)
             
         };

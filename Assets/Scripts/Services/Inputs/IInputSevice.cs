@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public interface IInputSevice
+public interface IInputSevice : IService
 {
     //джойстик
     Vector2 Axis { get; }

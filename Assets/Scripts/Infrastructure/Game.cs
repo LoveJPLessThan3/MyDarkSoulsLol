@@ -4,7 +4,6 @@ using UnityEngine;
 public class Game
 {
     //пока временно тусуется эта регистрация на сервис
-    public static IInputSevice InputService;  //чтобы не пришлось создавать экземпляр класс game, а обращаться на прямую
     private readonly LoadingCurtain _curtain;
 
     //инициализируем стэйт машину в конструкторе

@@ -6,17 +6,20 @@ using Object = UnityEngine.Object;
 public class LoadLevelScene : IPayLoadedState<string>
 {
     private const string InitialPointTag = "InitialPoint";
-    private const string HeroPath = "Hero/hero";
-    private const string HudPath = "MyPrefabs/Hud";
+
     private readonly GameStateMachine _stateMachine;
     private readonly SceneLoader _sceneLoader;
     private readonly LoadingCurtain _curtain;
+    private readonly IGameFactory _gameFactory;
 
-    public LoadLevelScene(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain curtain)
+    public LoadLevelScene(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain curtain, IGameFactory gameFactory)
     {
         _stateMachine = stateMachine;
         _sceneLoader = sceneLoader;
         this._curtain = curtain;
+        //_gameFactory = new GameFactory(new AssetProvider());
+        _gameFactory = gameFactory;
+
     }
 
     public void Enter(string sceneName) 
@@ -29,34 +32,22 @@ public class LoadLevelScene : IPayLoadedState<string>
 
     private void OnLoaded()
     {
-        Debug.Log(3);
         var initialPoint = GameObject.FindWithTag(InitialPointTag);
-        GameObject hero = Instantiate(HeroPath, initialPoint.transform.position);
-        Instantiate(HudPath);
+        GameObject hero = _gameFactory.CreateHero(initialPoint);
+        _gameFactory.CreateHud();
         //после загрузки героев, просим камеру зафолоувить его
         CameraFollow(hero);
         //после загрузки переходим в другой стэйт
         _stateMachine.EnterState<GameLoopState>();
     }
+
+    
+
+
     private void CameraFollow(GameObject hero) =>
         Camera.main.GetComponent<CameraFollow>().Follow(hero);
 
-    private static GameObject Instantiate(string path)
-    {
-        //получаем ссылку на префаб
-        GameObject prefab = Resources.Load<GameObject>(path);
-       // Debug.Log(prefab.name);
-        //так как нету монобехи
-        return Object.Instantiate(prefab);
-    }
-    private static GameObject Instantiate(string path, Vector3 spawnPoint)
-    {
-        //получаем ссылку на префаб
-        GameObject prefab = Resources.Load<GameObject>(path);
-       // Debug.Log(prefab.name);
-        //так как нету монобехи
-        return Object.Instantiate(prefab, spawnPoint, Quaternion.identity);
-    }
+   
 
     public void Exit()
     {
