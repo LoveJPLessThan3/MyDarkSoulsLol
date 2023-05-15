@@ -29,7 +29,7 @@ public class BootstrapState : IState
     private void EnterLoadLevel()
     {
         // IPayLoadedState<string>. поэтому еще пишем string
-        _gameStateMachine.EnterState<LoadLevelScene, string>("Main"); 
+        _gameStateMachine.EnterState<LoadProgressState>(); 
     }
     //резолвер зависимостей
     private void RegisterServices()
@@ -37,13 +37,16 @@ public class BootstrapState : IState
         //Пока сельская штука через статики
         //после регистрации сервиса 
         //InputService();
-        AllServices.Container.RegisterSingle<IInputSevice>(InputService());
+        AllServices.Container.RegisterSingle<IInputService>(InputService());
         AllServices.Container.RegisterSingle<IAssetProvider>(new AssetProvider());
+        AllServices.Container.RegisterSingle<IPersistentProgressService>(new PersistentProgressService());
         //Регистрируем интрефейс...() - выдать реализацию, если кто-то попросит выдать реализацию
         //Спрашиваем у контейнера, дать реализацию инцерфейса
         // Single - когда запрашиваешь у интерфейса отдать реализацию, он возвращал всегда одну и туже реализацию
         //получается контейнер возвращает экземпляр AllServices, а у него вызываем метод регистер
         AllServices.Container.RegisterSingle<IGameFactory>(new GameFactory(AllServices.Container.Single<IAssetProvider>()));
+        AllServices.Container.RegisterSingle<ISaveLoadService>
+            (new SaveLoadService(AllServices.Container.Single<IPersistentProgressService>(), AllServices.Container.Single<IGameFactory>()));
     }
 
     public void Exit()
@@ -51,7 +54,7 @@ public class BootstrapState : IState
       
     }
 
-    private IInputSevice InputService()
+    private IInputService InputService()
     {
         //если в эдиторе, то регистрируется стэндэлон подсервис.
         if (Application.isEditor)

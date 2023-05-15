@@ -1378,7 +1378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e795fc43c8234f849855a810fe096b55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CharacterController: {fileID: 1578743692166096683}
+  _characterController: {fileID: 1578743692166096683}
   MovementSpeed: 3
 --- !u!143 &1578743692166096683
 CharacterController:

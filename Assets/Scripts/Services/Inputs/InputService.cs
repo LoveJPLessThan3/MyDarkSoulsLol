@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public abstract class InputService : IInputSevice
+public abstract class InputService : IInputService
 {
     protected const string Horizontal = "Horizontal";
     protected const string Vertical = "Vertical";

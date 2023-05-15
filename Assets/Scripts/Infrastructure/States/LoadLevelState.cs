@@ -1,9 +1,10 @@
 ﻿using Mono.Cecil;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class LoadLevelScene : IPayLoadedState<string>
+public class LoadLevelState : IPayLoadedState<string>
 {
     private const string InitialPointTag = "InitialPoint";
 
@@ -11,20 +12,22 @@ public class LoadLevelScene : IPayLoadedState<string>
     private readonly SceneLoader _sceneLoader;
     private readonly LoadingCurtain _curtain;
     private readonly IGameFactory _gameFactory;
+    private readonly IPersistentProgressService _persistentProgress;
 
-    public LoadLevelScene(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain curtain, IGameFactory gameFactory)
+    public LoadLevelState(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadingCurtain curtain, IGameFactory gameFactory, IPersistentProgressService persistentProgress)
     {
         _stateMachine = stateMachine;
         _sceneLoader = sceneLoader;
         this._curtain = curtain;
         //_gameFactory = new GameFactory(new AssetProvider());
         _gameFactory = gameFactory;
-
+        this._persistentProgress = persistentProgress;
     }
 
     public void Enter(string sceneName) 
     {
         _curtain.Show();
+        _gameFactory.CleanUp();
         //Загрузка сцены, а после что еще грузанется
         Debug.Log(2);
         _sceneLoader.Load(sceneName, OnLoaded);
@@ -32,16 +35,29 @@ public class LoadLevelScene : IPayLoadedState<string>
 
     private void OnLoaded()
     {
+        InitGameWorld();
+        InformProgressReaders();
+        //после загрузки переходим в другой стэйт
+        _stateMachine.EnterState<GameLoopState>();
+    }
+
+    private void InformProgressReaders()
+    {
+        foreach (ISavedProgressReader progressReader in _gameFactory.ProgressReaders)
+        {
+            progressReader.LoadProgress(_persistentProgress.Progress);
+        }
+    }
+
+    private void InitGameWorld()
+    {
         var initialPoint = GameObject.FindWithTag(InitialPointTag);
         GameObject hero = _gameFactory.CreateHero(initialPoint);
         _gameFactory.CreateHud();
         //после загрузки героев, просим камеру зафолоувить его
         CameraFollow(hero);
-        //после загрузки переходим в другой стэйт
-        _stateMachine.EnterState<GameLoopState>();
     }
 
-    
 
 
     private void CameraFollow(GameObject hero) =>
