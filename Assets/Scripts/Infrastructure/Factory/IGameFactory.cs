@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IGameFactory : IService
@@ -8,4 +9,6 @@ public interface IGameFactory : IService
     void CleanUp();
     List<ISavedProgress> ProgressReaders { get; }
     List<ISavedProgressReader> ProgressWriters { get; }
+    public GameObject HeroGameObject { get; set; }
+    public event Action HeroCreated;
 }

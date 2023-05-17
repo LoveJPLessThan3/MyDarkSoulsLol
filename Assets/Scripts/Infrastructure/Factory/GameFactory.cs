@@ -7,10 +7,15 @@ public class GameFactory : IGameFactory
 {
 
     private readonly IAssetProvider _assets;
+
+    public event Action HeroCreated;
+
     //кто хочет записаться
     public List<ISavedProgress> ProgressReaders { get; } = new List<ISavedProgress>();
     //кто хочет еще и перезаписаться
     public List<ISavedProgressReader> ProgressWriters { get; } = new List<ISavedProgressReader>();
+    public GameObject HeroGameObject { get; set; }
+
     public GameFactory(IAssetProvider assets)
     {
         this._assets = assets;
@@ -20,7 +25,8 @@ public class GameFactory : IGameFactory
     {
         GameObject hero = _assets.Instantiate(AssetsPath.HeroPath, initialPoint.transform.position);
         RegisterProgressWatcher(hero);
-
+        HeroGameObject = hero;
+        HeroCreated?.Invoke();
         return hero;
     }
 
