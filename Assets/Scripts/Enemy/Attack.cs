@@ -24,6 +24,8 @@ public class Attack : MonoBehaviour
     //сколько пересечений может завиксировать оверлап и сохранить в буфер
     private Collider[] _hits = new Collider[1];
     private bool _attackWasActiving;
+    [SerializeField]
+    private float Damage = 10f;
 
     private void Awake()
     {
@@ -56,7 +58,7 @@ public class Attack : MonoBehaviour
     {
         if(Hit(out Collider hit))
         {
-
+            hit.transform.GetComponent<HeroHealth>().TakeDamage(Damage);
         }
     }
 

@@ -24,8 +24,14 @@ public class LoadProgressState : IState
     private void LoadProgressOrInitNew() => 
         _progressService.Progress = _saveLoadService.LoadProgress() ?? NewProgress();
 
-    private ProgressPlayer NewProgress() => 
-        new ProgressPlayer(initialLevel: "Main");
+    private ProgressPlayer NewProgress()
+    {
+
+        ProgressPlayer progressPlayer = new ProgressPlayer(initialLevel: "Main");
+        progressPlayer.HeroState.MaxHp = 50;
+        progressPlayer.HeroState.ResetHp();
+        return progressPlayer;
+    }
 
     public void Exit()
     {

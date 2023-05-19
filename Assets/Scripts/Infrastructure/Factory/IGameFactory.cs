@@ -5,7 +5,7 @@ using UnityEngine;
 public interface IGameFactory : IService
 {
     GameObject CreateHero(GameObject initialPoint);
-    void CreateHud();
+    GameObject CreateHud();
     void CleanUp();
     List<ISavedProgress> ProgressReaders { get; }
     List<ISavedProgressReader> ProgressWriters { get; }

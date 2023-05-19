@@ -51,14 +51,24 @@ public class LoadLevelState : IPayLoadedState<string>
 
     private void InitGameWorld()
     {
-        var initialPoint = GameObject.FindWithTag(InitialPointTag);
-        GameObject hero = _gameFactory.CreateHero(initialPoint);
-        _gameFactory.CreateHud();
+        GameObject hero = InitHero();
+        InitHud(hero);
         //после загрузки героев, просим камеру зафолоувить его
         CameraFollow(hero);
     }
 
+    private GameObject InitHero()
+    {
+        var initialPoint = GameObject.FindWithTag(InitialPointTag);
+        GameObject hero = _gameFactory.CreateHero(initialPoint);
+        return hero;
+    }
 
+    private void InitHud(GameObject hero)
+    {
+        GameObject hud = _gameFactory.CreateHud();
+        hud.GetComponentInChildren<ActorUI>().Construct(hero.GetComponent<HeroHealth>());
+    }
 
     private void CameraFollow(GameObject hero) =>
         Camera.main.GetComponent<CameraFollow>().Follow(hero);

@@ -31,10 +31,9 @@ public class GameFactory : IGameFactory
     }
 
 
-    public void CreateHud()
-    {
+    public GameObject CreateHud() => 
         _assets.Instantiate(AssetsPath.HudPath);
-    }
+
     //Иногда коллекции нужно чистить
     public void CleanUp()
     {
